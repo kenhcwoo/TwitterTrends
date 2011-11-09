@@ -1,0 +1,75 @@
+<project name="TwitterTrends" basedir="." default="main">
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="main-class" value="twitter.trends.TwitterTrends" />
+	<property name="lib.dir" value="libraries" />
+	<property name="test.dir" value="test" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<path id="classpath.test">
+		<pathelement location="/libraries/junit-4.10.jar" />
+		<pathelement location="${classes.dir}" />
+		<path refid="classpath" />
+	</path>
+
+	<target name="clean" depends="clean-compile-test">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" />
+	</target>
+
+	<target name="compile-test" depends="compile">
+		<javac includeantruntime="false" srcdir="${test.dir}" classpathref="classpath.test" />
+	</target>
+
+	<target name="clean-compile-test">
+		<delete>
+			<fileset dir="${test.dir}" includes="**/*.class" />
+		</delete>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar">
+		<java fork="true" classname="${main-class}">
+			<classpath>
+				<path refid="classpath" />
+				<path location="${jar.dir}/${ant.project.name}.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="test" depends="compile-test">
+		<junit printsummary="on" fork="true" haltonfailure="yes">
+			<classpath>
+				<path refid="classpath.test" />
+				<pathelement location="${test.dir}" />
+			</classpath>
+			<formatter type="brief" usefile="false" />
+			<batchtest fork="yes">
+				<fileset dir="${test.dir}" includes="**/*Test*.java" />
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="clean-build" depends="clean,jar" />
+
+	<target name="main" depends="clean,test,run" />
+
+</project>

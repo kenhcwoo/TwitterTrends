@@ -1,0 +1,6 @@
+This is just a simple program that makes a call to the Twitter API, grabs the top 10 trends and displays them to the command prompt. There is no fancy GUI or anything like that.
+
+The API called is https://api.twitter.com/1/trends/1.json. I have hardcoded the value of 1 as the woeid.
+The documentation is found here https://dev.twitter.com/docs/api/1/get/trends/%3Awoeid.
+
+The program also uses gson to parse the response.
